@@ -7,6 +7,39 @@ from list.views import home_page
 from list.models import Item
 
 
+class NewListTest(TestCase):
+
+	def test_saving_a_POST_request(self):
+		# commenting this out because we could use the test client provided by django instead
+		# request = HttpRequest()
+		# request.method = 'POST'
+		# request.POST['item_text'] = 'A new list item'
+
+		#response = home_page(request)
+		
+		#here we are using the client to submit a post to the following URL with data
+		self.client.post('/lists/new', data = {'item_text': 'A new list item'})
+
+		self.assertEqual(Item.objects.count(), 1)
+		new_item = Item.objects.first()
+		self.assertEqual(new_item.text, 'A new list item')
+
+	def test_redirects_after_POST(self):
+		# Once again we are goint to use the Django client instead to get the response of a post
+		# request = HttpRequest()
+		# request.method = 'POST'
+		# request.POST['item_text'] = 'A new list item'
+
+		# response = home_page(request)
+
+		response = self.client.post('/lists/new', data = {'item_text': 'A new list item'})
+
+		#This code will not work with the django client because the client uses the full stack 
+		#appending the relative URL to the path 
+		#self.assertEqual(response.status_code, 302)
+		#self.assertEqual(response['location'], '/lists/the-only-list-in-the-world/')
+		self.assertRedirects(response, '/lists/the-only-list-in-the-world/')
+
 class HomePageTest(TestCase):
 
 	def test_root_url_resolves_to_homepage_view(self):
@@ -26,49 +59,29 @@ class HomePageTest(TestCase):
 		# self.assertIn(b'<title>To-Do lists</title>', response.content)
 		# self.assertTrue(response.content.endswith(b'</html>'))
 
-	def test_home_page_can_save_a_POST_request(self):
-		request = HttpRequest()
-		request.method = 'POST'
-		request.POST['item_text'] = 'A new list item'
+	#HOME PAGE NO LONGER HANDLES POST REQUESTS
+	# def test_saving_and_retrieving_items(self):
+	# 	first_item = Item()
+	# 	first_item.text = 'The first (ever) list item'
+	# 	first_item.save()
 
-		response = home_page(request)
-		
-		self.assertEqual(Item.objects.count(), 1)
-		new_item = Item.objects.first()
-		self.assertEqual(new_item.text, 'A new list item')
+	# 	second_item = Item()
+	# 	second_item.text = 'Item the second'
+	# 	second_item.save()
 
-	def test_home_page_redirects_after_POST(self):
-		request = HttpRequest()
-		request.method = 'POST'
-		request.POST['item_text'] = 'A new list item'
+	# 	saved_items = Item.objects.all()
+	# 	self.assertEqual(saved_items.count(), 2)
 
-		response = home_page(request)
-
-		self.assertEqual(response.status_code, 302)
-		self.assertEqual(response['location'], '/lists/the-only-list-in-the-world/')
-
-	def test_saving_and_retrieving_items(self):
-		first_item = Item()
-		first_item.text = 'The first (ever) list item'
-		first_item.save()
-
-		second_item = Item()
-		second_item.text = 'Item the second'
-		second_item.save()
-
-		saved_items = Item.objects.all()
-		self.assertEqual(saved_items.count(), 2)
-
-		first_saved_item = saved_items[0]
-		second_saved_item = saved_items[1]
-		self.assertEqual(first_saved_item.text, 'The first (ever) list item')
-		self.assertEqual(second_saved_item.text, 'Item the second')
+	# 	first_saved_item = saved_items[0]
+	# 	second_saved_item = saved_items[1]
+	# 	self.assertEqual(first_saved_item.text, 'The first (ever) list item')
+	# 	self.assertEqual(second_saved_item.text, 'Item the second')
 
 
-	def test_home_page_only_saves_items_when_necessary(self):
-		request = HttpRequest()
-		home_page(request)
-		self.assertEqual(Item.objects.count(), 0)
+	# def test_home_page_only_saves_items_when_necessary(self):
+	# 	request = HttpRequest()
+	# 	home_page(request)
+	# 	self.assertEqual(Item.objects.count(), 0)
 
 class ListViewTest(TestCase):
 
