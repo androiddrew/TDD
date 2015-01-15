@@ -15,6 +15,11 @@ class NewVisitorTest(LiveServerTestCase):
 		#time.sleep(100)
 		self.browser.quit()
 
+	def check_for_row_in_list_table(self, str):
+		table = self.browser.find_element_by_id('id_list_table')
+		rows = table.find_elements_by_tag_name('tr')
+		self.assertIn(str, [row.text for row in rows])
+
 	def test_can_start_a_list_and_retrieve_it_later(self):
 		# Edith has heard about a cool new online to-do app. She goes # to check out its homepage 
 		self.browser.get(self.live_server_url)
@@ -44,14 +49,14 @@ class NewVisitorTest(LiveServerTestCase):
 		self.check_for_row_in_list_table('1: Buy peacock feathers')
 
 
-		table = self.browser.find_element_by_id('id_list_table')
-		rows = table.find_elements_by_tag_name('tr')
+		#table = self.browser.find_element_by_id('id_list_table')
+		#rows = table.find_elements_by_tag_name('tr')
 		#We can add our own failure message as an argument to most assert methods in the unittest module
 		#Turns out the generator is a little too clever
 		#self.assertTrue(any(row.text == '1: Buy peacock feathers' for row in rows),
 		#	"New to-do item did not appear in table")
 		#Much simpler test because selenium returns an iterable list when we use the elements function
-		self.assertIn('1: Buy peacock feathers', [row.text for row in rows])
+		#self.assertIn('1: Buy peacock feathers', [row.text for row in rows])
 
 		# There is still a text box inviting her to add another item. She
 		# enters "Use peacock feathers to make a fly" (Edith is very methodical)
