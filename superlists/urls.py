@@ -6,7 +6,9 @@ urlpatterns = patterns('',
 	#patterns() returns a formated list to the urlpatterns
     # Examples:
     url(r'^$', 'list.views.home_page', name='home'),
-    url(r'^lists/the-only-list-in-the-world/$', 'list.views.view_list', name='view_list'),
+    #This is an example of a capture text which we will use to pass items to our view as positional parameters 
+    url(r'^lists/(\d+)/$', 'list.views.view_list', name='view_list'),
+    url(r'^lists/(\d+)/add_item$', 'list.views.add_item', name='add_item'),
     url(r'^lists/new$', 'list.views.new_list', name= 'new_list'),
     # url(r'^blog/', include('blog.urls')),
 
