@@ -1,62 +1,9 @@
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase # Used for Static file testing
+from .base import FunctionalTest
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-import sys
-#import unittest
 
-
-class NewVisitorTest(StaticLiveServerTestCase):
-
-
-	@classmethod
-	def setUpClass(cls): #
-		for arg in sys.argv: #
-			if 'liveserver' in arg: #
-				cls.server_url = 'http://' + arg.split('=')[1] # 
-				return #
-		super().setUpClass()
-		cls.server_url = cls.live_server_url
-
-	@classmethod
-	def tearDownClass(cls):
-		if cls.server_url == cls.live_server_url:
-			super().tearDownClass()
-
-	def setUp(self):
-		self.browser = webdriver.Firefox()
-		self.browser.implicitly_wait(3)
-
-	def tearDown(self):
-		self.browser.quit()
-
-
-	def test_layout_and_styling(self):
-		#Edith goes to her homepage
-		self.browser.get(self.server_url)
-		self.browser.set_window_size(1024, 768)
-
-		#She notices the input box is nicely centered
-		inputbox = self.browser.find_element_by_id('id_new_item')
-		self.assertAlmostEqual(inputbox.location['x'] + inputbox.size['width'] / 2,
-			512, delta=5
-			)
-
-		# She starts a new list and sees the input is nicely
-		# centered there too
-		inputbox.send_keys('testing\n')
-		inputbox = self.browser.find_element_by_id('id_new_item') 
-		self.assertAlmostEqual(
-			inputbox.location['x'] + inputbox.size['width'] / 2,
-			512,
-			delta=5
-			)
-
-
-	def check_for_row_in_list_table(self, str):
-		table = self.browser.find_element_by_id('id_list_table')
-		rows = table.find_elements_by_tag_name('tr')
-		self.assertIn(str, [row.text for row in rows])
-
+class NewVisitorTest(FunctionalTest):
+	"""Used to test functionality of site in a new user scenario"""
 	def test_can_start_a_list_and_retrieve_it_later(self):
 		# Edith has heard about a cool new online to-do app. She goes # to check out its homepage 
 		self.browser.get(self.server_url)
@@ -91,7 +38,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 		#We can add our own failure message as an argument to most assert methods in the unittest module
 		#Turns out the generator is a little too clever
 		#self.assertTrue(any(row.text == '1: Buy peacock feathers' for row in rows),
-		#	"New to-do item did not appear in table")
+		#   "New to-do item did not appear in table")
 		#Much simpler test because selenium returns an iterable list when we use the elements function
 		#self.assertIn('1: Buy peacock feathers', [row.text for row in rows])
 
@@ -133,14 +80,3 @@ class NewVisitorTest(StaticLiveServerTestCase):
 		self.assertNotIn('Buy peacock feathers', page_text)
 		self.assertIn('Buy milk', page_text)
 		# Satisfied, they both go back to sleep
-
-
-		#self.fail('Finish the test!')
-		# Edith wonders whether the site will remember her list. Then she sees
-		# that the site has generated a unique URL for her -- there is some
-		# explanatory text to that effect.
-		# She visits that URL - her to-do list is still there. # Satisfied, she goes back to sleep
-
-#Removed because we are using the liveServerTestRunner instead
-##if __name__ == '__main__':
-##	unittest.main(warnings='ignore')
