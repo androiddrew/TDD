@@ -85,4 +85,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 #Need to add the root setting to collect all our static files. 
 #These will be served by the webserve in a diff directory
-STATIC_ROOT = os.path.join(BASE_DIR, '../static')
+STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, '../static'))
