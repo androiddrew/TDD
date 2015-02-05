@@ -4,6 +4,10 @@ from list.models import Item, List
 
 class ListAndItemModelTest(TestCase):
 
+	def test_get_absolute_url(self):
+		list_ = List.objects.create()
+		self.assertEqual(list_.get_absolute_url(), '/lists/%d/' % (list_.id))
+
 	def test_saving_and_retrieving_items(self):
 		list_ = List()
 		list_.save()
