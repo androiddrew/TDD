@@ -8,6 +8,7 @@ from django.utils.html import escape
 #Instead we are using the django test client
 from list.views import home_page
 from list.models import Item, List
+from list.forms import ItemForm
 
 
 class NewListTest(TestCase):
@@ -60,23 +61,36 @@ class NewListTest(TestCase):
 		self.assertEqual(Item.objects.count(), 0)
 
 class HomePageTest(TestCase):
+	#Tests removed because we are now using the Django Test objects as opposed
+	#To roling our own
 
-	def test_root_url_resolves_to_homepage_view(self):
-		found = resolve('/')
-		self.assertEqual(found.func, home_page)
+	# maxDiff = None
 
-	def test_home_page_returns_correct_html(self):
-		request = HttpRequest()
-		response = home_page(request)
-		expected_html = render_to_string('home.html')
-		#decode is used to convert the response.content bytes into a unicode string
-		self.assertEqual(response.content.decode(), expected_html)
+	# def test_root_url_resolves_to_homepage_view(self):
+	# 	found = resolve('/')
+	# 	self.assertEqual(found.func, home_page)
+
+	# def test_home_page_returns_correct_html(self):
+	# 	request = HttpRequest()
+	# 	response = home_page(request)
+	# 	expected_html = render_to_string('home.html', {'form': ItemForm()})
+	# 	#decode is used to convert the response.content bytes into a unicode string
+	# 	self.assertMultiLineEqual(response.content.decode(), expected_html)
 
 		#just remember that the response.content is going to be in bytes which is why we use b before
 		#the string
 		# self.assertTrue(response.content.startswith(b'<html>'))
 		# self.assertIn(b'<title>To-Do lists</title>', response.content)
 		# self.assertTrue(response.content.endswith(b'</html>'))
+
+	def test_home_page_renders_home_template(self):
+		response = self.client.get('/')
+		self.assertTemplateUsed(response, 'home.html')
+
+	def test_home_page_uses_item_form(self):
+		response = self.client.get('/')
+		self.assertIsInstance(response.context['form'], ItemForm)
+
 
 	#HOME PAGE NO LONGER HANDLES POST REQUESTS
 	# def test_saving_and_retrieving_items(self):
